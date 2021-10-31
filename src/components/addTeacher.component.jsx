@@ -1,10 +1,13 @@
 import React, { useRef } from "react";
-import "./addTeacher.style.css"
+import "./addTeacher.style.css";
 const AddTeacher = ({ onChange, onSubmit, onClear }) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
-  const gradeRef = useRef();
-  const ageRef = useRef();
+  const phoneNumberRef = useRef();
+  const positionRef = useRef();
+  const isAbsentRef = useRef();
+  const subjectRef = useRef();
+
   const onFormSubmit = (e) => {
     e.preventDefault();
     onSubmit();
@@ -15,13 +18,15 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
   const onClearClick = () => {
     firstNameRef.current.value = "";
     lastNameRef.current.value = "";
-    gradeRef.current.value = "";
-    ageRef.current.value = "";
+    phoneNumberRef.current.value = "";
+    positionRef.current.value = "";
+    isAbsentRef.current.value = "-1";
+    subjectRef.current.value ="";
     onClear();
   };
 
   return (
-    <div className="addStudent">
+    <div className="addTeacher">
       <form action="" onSubmit={onFormSubmit}>
         <input
           type="text"
@@ -40,21 +45,41 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           onChange={onInputChange}
         />
         <input
-          type="text"
-          placeholder={"grade"}
-          ref={gradeRef}
-          name={"grade"}
-          id={"grade"}
+          type="number"
+          placeholder={"phone number"}
+          ref={phoneNumberRef}
+          name={"phoneNumber"}
+          id={"phoneNumber"}
           onChange={onInputChange}
         />
         <input
           type="text"
-          placeholder={"age"}
-          ref={ageRef}
-          name={"age"}
-          id={"age"}
+          placeholder={"position"}
+          ref={positionRef}
+          name={"position"}
+          id={"position"}
           onChange={onInputChange}
         />
+        <input
+          type="text"
+          placeholder={"subject"}
+          ref={subjectRef}
+          name={"subject"}
+          id={"subject"}
+          onChange={onInputChange}
+        />
+        <select
+          name="isAbsent"
+          ref={isAbsentRef}
+          id="isAbsent"
+          onChange={onInputChange}
+        >
+          <option value={"-1"} disabled selected="true">
+            Chose an option
+          </option>
+          <option value={true}>Absent</option>
+          <option value={false}>Not Absent</option>
+        </select>
         <input type="submit" value={"Add"} />
         <input type="button" value={"Clear"} onClick={onClearClick} />
       </form>

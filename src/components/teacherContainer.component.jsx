@@ -2,64 +2,89 @@ import React, { useState, useEffect } from "react";
 import db from "../firebase";
 import { v4 as uuidv4 } from "uuid";
 import Teacher from "./teacher.component";
-import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import AddTeacher from "./addTeacher.component";
 
 import "./classRoom.style.css";
 
 const StudentContainer = () => {
-  const [students, setStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [student, setStudent] = useState({
+  const [teacher, setTeacher] = useState({
     firstName: "",
     lastName: "",
-    age: "",
-    grade: "",
+    phoneNumber: 0,
+    position: "",
+    isAbsent: false,
     id: "",
   });
-  const studentsRef = collection(db, "student");
+  const teachersRef = collection(db, "teacher");
 
   useEffect(async () => {
     setLoading(true);
-    const data = await getDocs(studentsRef);
-    setStudents((prev) =>
+    const data = await getDocs(teachersRef);
+    setTeachers((prev) =>
       data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
     );
     setLoading(false);
   }, []);
-  const addStudent = async () => {
-    const tempStudent = { ...student };
-    tempStudent.id = uuidv4();
-    setStudents((prev) => [...students, tempStudent]);
-    const res = await setDoc(doc(db, "student", tempStudent.id), tempStudent);
+  const addTeacher = async () => {
+    const tempTeacher = { ...teacher };
+    tempTeacher.id = uuidv4();
+    setTeachers((prev) => [...teachers, tempTeacher]);
+    const res = await setDoc(doc(db, "teacher", tempTeacher.id), tempTeacher);
     console.log(res);
   };
   const onInputChange = (name, value) => {
-    const tempStudent = { ...student };
-    tempStudent[name] = value;
-    setStudent(tempStudent);
+    const tempTeacher = { ...teacher };
+    tempTeacher[name] = value;
+    setTeacher(tempTeacher);
   };
-  const clearStudentData = () => {
-    setStudent({ firstName: "", lastName: "", age: "", grade: "", id: "" });
+  const clearTeacherData = () => {
+    setTeacher({
+      firstName: "",
+      lastName: "",
+      phoneNumber: 0,
+      position: "",
+      subject:"",
+      isAbsent: false,
+      id: "",
+    });
   };
+  const deleteTeacher =async(id)=>{
+      let tempTeachers =[...teachers];
+      tempTeachers=tempTeachers.filter((teacher)=>teacher.id !== id);
+      setTeachers(prev => tempTeachers);
+   await deleteDoc(doc(db,"teacher",id));
+  } 
   return (
     <div className="studentContainer">
       <AddTeacher
-        onSubmit={addStudent}
+        onSubmit={addTeacher}
         onChange={onInputChange}
-        onClear={clearStudentData}
+        onClear={clearTeacherData}
+        edit={false}
       />
-      {console.log(student)}
+      {console.log(teachers)}
       {!loading
-        ? students.map((student) => {
+        ? teachers.map((teacher) => {
             return (
               <Teacher
-                key={student.id}
-                firstName={student.firstName}
-                lastName={student.lastName}
-                age={student.age}
-                grade={student.grade}
-                id={student.id}
+                key={teacher.id}
+                firstName={teacher.firstName}
+                lastName={teacher.lastName}
+                phoneNumber={teacher.phoneNumber}
+                position={teacher.position}
+                subject={teacher.subject}
+                isAbsent={teacher.isAbsent}
+                id={teacher.id}
+                onDelete={deleteTeacher}
               />
             );
           })
