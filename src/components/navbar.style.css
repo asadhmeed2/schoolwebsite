@@ -1,0 +1,16 @@
+.navbar ul {
+  list-style: none;
+  display: flex;
+width: 20%;
+justify-content: space-around;
+}
+.navbar{
+width: 100vw;
+display: flex;
+justify-content:space-between;
+background: #333;
+}
+.navLink {
+  text-decoration: none;
+  color: aliceblue;
+}
