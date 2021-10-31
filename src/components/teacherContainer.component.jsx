@@ -3,7 +3,7 @@ import db from "../firebase";
 import { v4 as uuidv4 } from "uuid";
 import Teacher from "./teacher.component";
 import { collection, getDocs, setDoc, doc } from "firebase/firestore";
-import AddTeacter from "./addTeacher.component";
+import AddTeacher from "./addTeacher.component";
 
 import "./classRoom.style.css";
 
@@ -44,7 +44,7 @@ const StudentContainer = () => {
   };
   return (
     <div className="studentContainer">
-      <AddStudent
+      <AddTeacher
         onSubmit={addStudent}
         onChange={onInputChange}
         onClear={clearStudentData}
@@ -53,7 +53,7 @@ const StudentContainer = () => {
       {!loading
         ? students.map((student) => {
             return (
-              <Student
+              <Teacher
                 key={student.id}
                 firstName={student.firstName}
                 lastName={student.lastName}
