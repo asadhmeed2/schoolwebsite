@@ -1,42 +1,47 @@
 import React, { useState, useEffect } from "react";
 import db from "../firebase";
 import { v4 as uuidv4 } from "uuid";
-import Student from "./student.component";
-import { collection, getDocs ,setDoc,doc} from "firebase/firestore";
-import  AddStudent from "./addStudent.component";
+import Teacher from "./teacher.component";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import AddTeacter from "./addTeacher.component";
 
 import "./classRoom.style.css";
 
 const StudentContainer = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [student,setStudent] = useState({firstName:"",lastName:"",age:"",grade:"",id:""})
+  const [student, setStudent] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    grade: "",
+    id: "",
+  });
   const studentsRef = collection(db, "student");
 
-
   useEffect(async () => {
-     setLoading(true);
+    setLoading(true);
     const data = await getDocs(studentsRef);
     setStudents((prev) =>
       data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
     );
     setLoading(false);
   }, []);
-  const addStudent=async()=>{
-    const tempStudent ={...student};
+  const addStudent = async () => {
+    const tempStudent = { ...student };
     tempStudent.id = uuidv4();
-    setStudents((prev)=>[...students,tempStudent]);
-    const res = await setDoc(doc(db, "student", tempStudent.id),tempStudent);
+    setStudents((prev) => [...students, tempStudent]);
+    const res = await setDoc(doc(db, "student", tempStudent.id), tempStudent);
     console.log(res);
-  }
-  const onInputChange=(name,value)=>{
-    const tempStudent ={...student};
-    tempStudent[name]=value;
+  };
+  const onInputChange = (name, value) => {
+    const tempStudent = { ...student };
+    tempStudent[name] = value;
     setStudent(tempStudent);
-  }
-  const clearStudentData=()=>{
+  };
+  const clearStudentData = () => {
     setStudent({ firstName: "", lastName: "", age: "", grade: "", id: "" });
-  }
+  };
   return (
     <div className="studentContainer">
       <AddStudent
