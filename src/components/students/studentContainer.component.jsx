@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import db from "../firebase";
+import db from "../../firebase";
+import "./styles/studentContainer.style.css";
 import { v4 as uuidv4 } from "uuid";
 import Student from "./student.component";
 import {
@@ -12,7 +13,7 @@ import {
 } from "firebase/firestore";
 import AddStudent from "./addStudent.component";
 
-import "./classRoom.style.css";
+
 
 const StudentContainer = () => {
   const [students, setStudents] = useState([]);
@@ -21,6 +22,7 @@ const StudentContainer = () => {
     firstName: "",
     lastName: "",
     age: "",
+    assignToClass:"-1",
     grade: "",
     id: "",
   });
@@ -47,9 +49,10 @@ const StudentContainer = () => {
     setStudent(tempStudent);
   };
   const clearStudentData = () => {
-    setStudent({ firstName: "", lastName: "", age: "", grade: "", id: "" });
+    setStudent({ firstName: "", lastName: "",assignToClass:false, age: "", grade: "", id: "" });
   };
   const deleteStudent = async (id) => {
+
     let tempStudents = [...students];
     tempStudents = tempStudents.filter((student) => student.id !== id);
     setStudents((prev) => tempStudents);
@@ -77,25 +80,28 @@ const StudentContainer = () => {
         edit={{
           edit: false,
           student: student,
-          cancelEdit: ()=>{},
+          cancelEdit: () => {},
         }}
       />
-      {!loading
-        ? students.map((student) => {
-            return (
-              <Student
-                key={student.id}
-                firstName={student.firstName}
-                lastName={student.lastName}
-                age={student.age}
-                grade={student.grade}
-                id={student.id}
-                onDelete={deleteStudent}
-                onUpdate={updateStudent}
-              />
-            );
-          })
-        : "loading..."}
+      <div className="students">
+        {!loading
+          ? students.map((student) => {
+              return (
+                <Student
+                  key={student.id}
+                  firstName={student.firstName}
+                  lastName={student.lastName}
+                  age={student.age}
+                  assignToClass={student.assignToClass}
+                  grade={student.grade}
+                  id={student.id}
+                  onDelete={deleteStudent}
+                  onUpdate={updateStudent}
+                />
+              );
+            })
+          : "loading..."}
+      </div>
     </div>
   );
 };

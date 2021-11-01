@@ -1,0 +1,8 @@
+.teacherContainer {
+  display: flex;
+}
+.teachers {
+  display: flex;
+  flex-wrap: wrap;
+  margin:0 1vw ;
+}

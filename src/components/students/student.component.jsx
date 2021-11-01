@@ -1,7 +1,7 @@
 import React from "react";
 import AddStudent from "./addStudent.component";
 
-import "./student.style.css";
+import "./styles/student.style.css";
 
 const Student = ({
   firstName,
@@ -9,12 +9,14 @@ const Student = ({
   age,
   grade,
   id,
+  assignToClass,
   onDelete,
   onUpdate,
 }) => {
   const [student, setStudent] = React.useState({
     firstName: firstName,
     lastName: lastName,
+    assignToClass: assignToClass,
     age: age,
     grade: grade,
     id: id,
@@ -45,14 +47,15 @@ const Student = ({
   }
   return (
     <div className="student">
+       {!edit ? (<>
       <p>{`First name : ${student.firstName}`}</p>
       <p>{`Last name : ${student.lastName}`}</p>
       <p>{`Age : ${student.age}`}</p>
       <p>{`Grade : ${student.grade}`}</p>
+      <p>{`assignToClass : ${student.assignToClass}`}</p>
       <input type="button" onClick={deleteStudent} value={"delete"} />
-
-      {!edit ? (
         <input type="button" onClick={updateStudentON} value={"edit"} />
+        </>
       ) : (
         <AddStudent
           onSubmit={updateStudent}

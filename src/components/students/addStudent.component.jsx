@@ -1,14 +1,13 @@
-import { connectFirestoreEmulator } from "@firebase/firestore";
-import React, { useRef, useState ,useEffect} from "react";
-
+import React, { useRef, useState, useEffect } from "react";
+import "./styles/addStudent.style.css";
 const AddStudent = ({ onChange, onSubmit, onClear, edit }) => {
-const [editMode, setEditMode] = useState(edit);
+  const [editMode, setEditMode] = useState(edit);
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const gradeRef = useRef();
   const ageRef = useRef();
+  const assignToClassRef = useRef();
 
-  
   const onInputChange = (e) => {
     onChange(e.target.name, e.target.value);
   };
@@ -17,6 +16,7 @@ const [editMode, setEditMode] = useState(edit);
     lastNameRef.current.value = "";
     gradeRef.current.value = "";
     ageRef.current.value = "";
+    assignToClassRef.current.value = "-1";
     onClear();
   };
   const onFormSubmit = (e) => {
@@ -25,10 +25,9 @@ const [editMode, setEditMode] = useState(edit);
     onClearClick();
     onClear();
   };
-  
+
   return (
     <div className="addStudent">
-        {console.log(editMode)}
       <form action="" onSubmit={onFormSubmit}>
         <input
           type="text"
@@ -50,15 +49,6 @@ const [editMode, setEditMode] = useState(edit);
         />
         <input
           type="text"
-          placeholder={"grade"}
-          ref={gradeRef}
-          name={"grade"}
-          id={"grade"}
-          value={edit.student.grade}
-          onChange={onInputChange}
-        />
-        <input
-          type="text"
           placeholder={"age"}
           ref={ageRef}
           name={"age"}
@@ -66,10 +56,33 @@ const [editMode, setEditMode] = useState(edit);
           value={edit.student.age}
           onChange={onInputChange}
         />
+        <input
+          type="text"
+          placeholder={"grade"}
+          ref={gradeRef}
+          name={"grade"}
+          id={"grade"}
+          value={edit.student.grade}
+          onChange={onInputChange}
+        />
+
+        <select
+          name="assignToClass"
+          ref={assignToClassRef}
+          id="assignToClass"
+          value={edit.student.assignToClass}
+          onChange={onInputChange}
+        >
+          <option value={"-1"} disabled >
+            Chose an option
+          </option>
+          <option value={true}>assign To Class</option>
+          <option value={false}>Not assign To Class</option>
+        </select>
         {editMode.edit ? (
-            <>
-          <input value="edit" type={"submit"} />
-          <input type="button" onClick={editMode.onCancel} value={"Cancel"} />
+          <>
+            <input value="edit" type={"submit"} />
+            <input type="button" onClick={editMode.onCancel} value={"Cancel"} />
           </>
         ) : (
           <>

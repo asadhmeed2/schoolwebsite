@@ -1,13 +1,13 @@
-import React, { useRef } from "react";
-import "./addTeacher.style.css";
-const AddTeacher = ({ onChange, onSubmit, onClear }) => {
+import React, { useRef ,useState} from "react";
+import "./style/addTeacher.style.css";
+const AddTeacher = ({ onChange, onSubmit, onClear ,edit}) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const phoneNumberRef = useRef();
   const positionRef = useRef();
   const isAbsentRef = useRef();
   const subjectRef = useRef();
-
+const [editMode] = useState(edit);
   const onFormSubmit = (e) => {
     e.preventDefault();
     onSubmit();
@@ -34,6 +34,7 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           ref={firstNameRef}
           name={"firstName"}
           id={"firstName"}
+          value={edit.teacher.firstName}
           onChange={onInputChange}
         />
         <input
@@ -42,6 +43,7 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           ref={lastNameRef}
           name={"lastName"}
           id={"lastName"}
+          value={edit.teacher.lastName}
           onChange={onInputChange}
         />
         <input
@@ -50,6 +52,7 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           ref={phoneNumberRef}
           name={"phoneNumber"}
           id={"phoneNumber"}
+          value={edit.teacher.phoneNumber}
           onChange={onInputChange}
         />
         <input
@@ -58,6 +61,7 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           ref={positionRef}
           name={"position"}
           id={"position"}
+          value={edit.teacher.position}
           onChange={onInputChange}
         />
         <input
@@ -66,22 +70,33 @@ const AddTeacher = ({ onChange, onSubmit, onClear }) => {
           ref={subjectRef}
           name={"subject"}
           id={"subject"}
+          value={edit.teacher.subject}
           onChange={onInputChange}
         />
         <select
           name="isAbsent"
           ref={isAbsentRef}
           id="isAbsent"
+          value={edit.teacher.isAbsent}
           onChange={onInputChange}
         >
-          <option value={"-1"} disabled selected="true">
+          <option value={"-1"} disabled >
             Chose an option
           </option>
           <option value={true}>Absent</option>
           <option value={false}>Not Absent</option>
         </select>
-        <input type="submit" value={"Add"} />
-        <input type="button" value={"Clear"} onClick={onClearClick} />
+        {editMode.edit ? (
+          <>
+            <input value="edit" type={"submit"} />
+            <input type="button" onClick={editMode.onCancel} value={"Cancel"} />
+          </>
+        ) : (
+          <>
+            <input type="submit" value={"Add"} />
+            <input type="button" value={"Clear"} onClick={onClearClick} />
+          </>
+        )}
       </form>
     </div>
   );
