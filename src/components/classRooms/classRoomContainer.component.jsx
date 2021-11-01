@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import db from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
-import Teacher from "../teachers/teacher.component";
-import Student from "../students/student.component";
 import ClassRoom from "./classRoom.component";
 import "./style/classRoomContainer.style.css";
 import {
@@ -13,7 +11,7 @@ import {
   deleteDoc,
   updateDoc,
 } from "firebase/firestore";
-
+import AddClassRoom from "./addClassRoom.component"
 
 const ClassRoomContainer = () => {
   const [classRooms, setClassRooms] = useState([]);
@@ -23,6 +21,7 @@ const ClassRoomContainer = () => {
   const [classRoom, setClassRoom] = useState({
     grade: "",
     homeRoomTeacherId: "",
+    hasAstudents:false,
     number: 0,
     student1Id: "",
     student2Id: "",
@@ -39,7 +38,7 @@ const ClassRoomContainer = () => {
   const classRoomRef = collection(db, "classRoom");
   const teacherRef = collection(db, "teacher");
   const studentRef = collection(db, "student");
-
+//initialize the states and get the data from the server
   useEffect(async () => {
     try {
       setLoading(true);
@@ -60,6 +59,7 @@ const ClassRoomContainer = () => {
       console.error(e);
     }
   }, []);
+  // add a new class room to the data base
   const addClassRoom = async () => {
     const tempClassRoom = { ...classRoom };
     tempClassRoom.id = uuidv4();
@@ -69,29 +69,18 @@ const ClassRoomContainer = () => {
       tempClassRoom
     );
   };
-//   const onInputChange = (name, value) => {
-//     const tempClassRoom = { ...classRoom };
-//     tempClassRoom[name] = value;
-//     setClassRoom(tempClassRoom);
-//   };
-//   const clearClassRoomData = () => {
-//     setClassRoom({
-//       grade: "",
-//       homeRoomTeacherId: "",
-//       number: 0,
-//       student1Id: "",
-//       student2Id: "",
-//       student3Id: "",
-//       student4Id: "",
-//       student5Id: "",
-//       student6Id: "",
-//       student7Id: "",
-//       student8Id: "",
-//       student9Id: "",
-//       student10Id: "",
-//       id: "",
-//     });
-//   };
+  const onInputChange = (name, value) => {
+    const tempClassRoom = { ...classRoom };
+    tempClassRoom[name] = value;
+    setClassRoom(tempClassRoom);
+  };
+  const clearClassRoomData = () => {
+    setClassRoom({
+      grade: "",
+      number: 0,
+
+    });
+  };
   const deleteClassRoom = async (id) => {
     try {
       let tempClassRooms = [...classRooms];
@@ -120,6 +109,9 @@ const ClassRoomContainer = () => {
   // };
   return (
     <div className="classRoomContainer">
+      <div className="addClassRoom">
+        <AddClassRoom onSubmit={addClassRoom} onChange={onInputChange}/>
+      </div>
       {classRooms.map((classRoom)=>{
         return <ClassRoom key={classRoom.id} classRoom={classRoom} students={students} teachers={teachers}/>
       })
