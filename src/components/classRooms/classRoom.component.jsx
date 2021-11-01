@@ -16,18 +16,30 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
   const [editMode, setEditMode] = useState(false);
   const [studentsData, setStudentsData] = useState([]);
   const [teachersData, setTeachersData] = useState([]);
-  const [classRoomData, setClassRoomData] = useState({});
+  const [classRoomData, setClassRoomData] = useState({
+    grade: classRoom.grade,
+    homeRoomTeacherId: classRoom.homeRoomTeacherId,
+    hasAstudents: classRoom.hasAstudents,
+    number: classRoom.number,
+    student1Id: classRoom.student1Id,
+    student2Id: classRoom.student2Id,
+    student3Id: classRoom.student3Id,
+    student4Id: classRoom.student4Id,
+    student5Id: classRoom.student5Id,
+    student6Id: classRoom.student6Id,
+    student7Id: classRoom.student7Id,
+    student8Id: classRoom.student8Id,
+    student9Id: classRoom.student9Id,
+    student10Id: classRoom.student10Id,
+    id: classRoom.id,
+  });
   const [classRoomStudents, setClassRoomStudents] = useState([]);
   const [showClassStudents, setShowClassStudents] = useState(false);
-  //references to data base
-  const classRoomRef = collection(db, "classRoom");
-  const teacherRef = collection(db, "teacher");
-  const studentRef = collection(db, "student");
   //update the states before the first render
   useEffect(() => {
-    setStudentsData((prev)=>students);
-    setTeachersData((prev) => teachers);
-    setClassRoomData((prev) => classRoom);
+    setStudentsData(students);
+    setTeachersData( teachers);
+    setClassRoomData( classRoom);
   }, []);
   //inner functions
   const updateTeacher = (isAssignToClass) => {};
@@ -127,6 +139,7 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
         }
         
       }
+      await updateDoc(doc(db, "classRoom", classRoomData.id), classRoomData);
     } catch (err) {
       console.error(err);
     }
@@ -134,11 +147,10 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
   //return
   return (
     <div className="classRoom">
-      {console.log(classRoomStudents)}
       <p
         className="classRoomTitle"
         onClick={showStudents}
-      >{`grade : ${classRoom.grade}`}</p>
+      >{`grade : ${classRoomData.grade}`}</p>
       {showClassStudents ? (
         <>
           {console.log(classRoomStudents)}
@@ -160,15 +172,18 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
         onClick={addStudnetsToClasses}
       />
       <input type="button" value="edit" onClick={editModeOn} />
-      {console.log("teachersData: ",teachersData)}
-     {editMode? <EditClassRoom
-        students={studentsData}
-        teachers={teachersData}
-        classRoom={classRoomData}
-        onCancel={editModeOff}
-        onChange={onInputChange}
-        onClick={updateClassRoom}
-      />:""}
+      {editMode ? (
+        <EditClassRoom
+          students={students}
+          teachers={teachers}
+          classRoom={classRoomData}
+          onCancel={editModeOff}
+          onChange={onInputChange}
+          onClick={updateClassRoom}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 };

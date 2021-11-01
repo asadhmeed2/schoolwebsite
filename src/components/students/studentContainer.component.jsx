@@ -22,7 +22,7 @@ const StudentContainer = () => {
     firstName: "",
     lastName: "",
     age: "",
-    assignToClass:"-1",
+    assignToClass:false,
     grade: "",
     id: "",
   });
