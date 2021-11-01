@@ -14,9 +14,9 @@ import EditClassRoom from "./editClassRoom.component";
 const ClassRoom = ({ classRoom, students, teachers }) => {
   //states
   const [editMode, setEditMode] = useState(false);
-  const [studentsData, setStudentsData] = useState(students);
-  const [teachersData, setTeachersData] = useState(teachers);
-  const [classRoomData, setClassRoomData] = useState(classRoom);
+  const [studentsData, setStudentsData] = useState([]);
+  const [teachersData, setTeachersData] = useState([]);
+  const [classRoomData, setClassRoomData] = useState({});
   const [classRoomStudents, setClassRoomStudents] = useState([]);
   const [showClassStudents, setShowClassStudents] = useState(false);
   //references to data base
@@ -25,9 +25,9 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
   const studentRef = collection(db, "student");
   //update the states before the first render
   useEffect(() => {
-    setStudentsData(students);
-    setTeachersData(teachers);
-    setClassRoomData(classRoom);
+    setStudentsData((prev)=>students);
+    setTeachersData((prev) => teachers);
+    setClassRoomData((prev) => classRoom);
   }, []);
   //inner functions
   const updateTeacher = (isAssignToClass) => {};
@@ -160,6 +160,7 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
         onClick={addStudnetsToClasses}
       />
       <input type="button" value="edit" onClick={editModeOn} />
+      {console.log("teachersData: ",teachersData)}
      {editMode? <EditClassRoom
         students={studentsData}
         teachers={teachersData}
