@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState} from "react";
 import "./styles/addStudent.style.css";
 const AddStudent = ({ onChange, onSubmit, onClear, edit }) => {
-  const [editMode, setEditMode] = useState(edit);
+  const [editMode] = useState(edit);
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const gradeRef = useRef();

@@ -8,8 +8,8 @@ const Select =({studentI,onInputChange,studentsData,classRoom})=>{
         <label htmlFor={`student${studentI}`}>{`Student${studentI}`}</label>
         <select
           onChange={onInputChange}
-          name={"student2Id"}
-          defaultValue={classRoom[`student${studentI}Id`]}
+          name={`student${studentI}Id`}
+          defaultValue={classRoom[`student${studentI}Id`]?classRoom[`student${studentI}Id`]:"0"}
         >
           <option value="0" disabled={true}>
             student

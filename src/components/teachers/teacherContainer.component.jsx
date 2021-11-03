@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import Teacher from "./teacher.component";
 import "./style/teacherContainer.style.css";
 import AddTeacher from "./addTeacher.component";
+import Search from "../search/search.component";
+
 import {
   collection,
   getDocs,
@@ -13,10 +15,10 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-
-
 const StudentContainer = () => {
   const [teachers, setTeachers] = useState([]);
+  const [classRooms, setClassRooms] = useState([]);
+  const [searchedTeachers, setSearchedTeachers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [teacher, setTeacher] = useState({
     firstName: "",
@@ -24,26 +26,62 @@ const StudentContainer = () => {
     phoneNumber: 0,
     position: "",
     isAbsent: "-1",
-    subject:"",
+    subject: "",
     id: "",
   });
   const teachersRef = collection(db, "teacher");
+  const classRoomRef = collection(db, "classRoom");
 
-  useEffect(async () => {
+  useEffect(() => {
     setLoading(true);
-    const data = await getDocs(teachersRef);
-    setTeachers((prev) =>
-      data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-    );
+    getDocs(teachersRef)
+      .then((data) => {
+        setTeachers((prev) =>
+          data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+        if(!searchedTeachers.length){
+          setSearchedTeachers((prev) =>
+            data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+          );
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    getDocs(classRoomRef)
+      .then((classRoomData) => {
+        setClassRooms((prev) =>
+          classRoomData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     setLoading(false);
-  }, []);
+  }, [classRoomRef, teachersRef]);
+
+  const onSearchInputChange = (name) => {
+    let tempSearchedTeachers = teachers.filter((teacher) =>
+      `${teacher.firstName} ${teacher.lastName}`
+        .toLowerCase()
+        .includes(name.toLowerCase())
+    );
+    setSearchedTeachers((prev) => tempSearchedTeachers);
+  };
   const addTeacher = async () => {
     const tempTeacher = { ...teacher };
     tempTeacher.id = uuidv4();
     setTeachers((prev) => [...teachers, tempTeacher]);
-    const res = await setDoc(doc(db, "teacher", tempTeacher.id), tempTeacher);
-    console.log(res);
+    if (searchedTeachers.length === teachers.length) {
+      setSearchedTeachers((prev) => [...teachers, tempTeacher]);
+    }
+    await setDoc(doc(db, "teacher", tempTeacher.id), tempTeacher);
   };
+  /**
+   *
+   * @param {*} name name on the input field or select field
+   * @param {*} value the input of the user
+   */
   const onInputChange = (name, value) => {
     const tempTeacher = { ...teacher };
     tempTeacher[name] = value;
@@ -56,16 +94,28 @@ const StudentContainer = () => {
       phoneNumber: 0,
       position: "",
       subject: "",
-      assignToClass:false,
+      assignToClass: false,
       isAbsent: false,
       id: "",
     });
   };
   const deleteTeacher = async (id) => {
     try {
+      let teacher = teachers.find((teacher) => teacher.id === id);
+      let teacherClassRoom = classRooms.find(
+        (classRoom) => classRoom.homeRoomTeacherId === teacher.id
+      );
+      teacherClassRoom.homeRoomTeacherId = "";
+      await updateDoc(
+        doc(db, "classRoom", teacherClassRoom.id),
+        teacherClassRoom
+      );
       let tempTeachers = [...teachers];
       tempTeachers = tempTeachers.filter((teacher) => teacher.id !== id);
       setTeachers((prev) => tempTeachers);
+      if (searchedTeachers.length === teachers.length) {
+        setSearchedTeachers((prev) => tempTeachers);
+      }
       await deleteDoc(doc(db, "teacher", id));
     } catch (e) {
       console.error(e);
@@ -79,8 +129,10 @@ const StudentContainer = () => {
         return teacher;
       });
       setTeachers(TempTeachers);
-     let res=await updateDoc(doc(db, "teacher", teacherData.id), teacherData);
-     console.log("respons ",res);
+      if (searchedTeachers.length === teachers.length) {
+        setSearchedTeachers(TempTeachers);
+      }
+      await updateDoc(doc(db, "teacher", teacherData.id), teacherData);
     } catch (e) {
       console.error(e);
     }
@@ -93,10 +145,12 @@ const StudentContainer = () => {
         onClear={clearTeacherData}
         edit={{ edit: false, teacher: teacher, cancelEdit: () => {} }}
       />
-      {console.log(teachers)}
+      <div className="search">
+        <Search onChange={onSearchInputChange} />
+      </div>
       <div className="teachers">
         {!loading
-          ? teachers.map((teacher) => {
+          ? searchedTeachers.map((teacher) => {
               return (
                 <Teacher
                   key={teacher.id}

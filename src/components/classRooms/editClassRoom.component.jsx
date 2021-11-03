@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import "./style/editClassRoom.style.css";
 import Select from "./selectStudent.component"
 const EditClassRoom = ({
@@ -9,22 +9,25 @@ const EditClassRoom = ({
   students,
   onClick,
 }) => {
-  const [classRoomData, setClassRoomData] = useState(classRoom);
-  const [teachersData, setTeachersData] = useState(teachers);
-  const [studentsData, setStudentsData] = useState(students);
-  const[choseWrongTeacher,setChoseWrongTeacher] = useState(false)
-  const [choseWrongStudent, setChoseWrongStudent] = useState(false);
+  const [classRoomData] = useState(classRoom);
+  const [teachersData] = useState(teachers);
+  //cancel the edit mode and hides the edit form
   const onCancelBtnClick = () => {
     onCancel(classRoomData);
   };
+  //handles the form submit
   const onEditBtnClick = (e) => {
     e.preventDefault();
     onCancelBtnClick()
     onClick(classRoomData);
   };
+  //handles the input change
   const onInputChange = (e) => {
     if (e.target.name === "homeRoomTeacherId") {
-      setChoseWrongTeacher(false);
+      e.target.classList.remove("red");
+      if(classRoomData.homeRoomTeacherId===""){
+        onChange(e.target.name, e.target.value);
+      }
       let tempTeacher = teachersData.find(
         (teacher) => teacher.id === e.target.value
       );
@@ -34,17 +37,16 @@ const EditClassRoom = ({
       ) {
         onChange(e.target.name, e.target.value);
       }else{
-        setChoseWrongTeacher(true)
+         e.target.classList.add("red");
       }
     }else if(e.target.name.slice(0,7)==='student'){
       e.target.classList.remove("red")
-        let tempStudent = studentsData.find(
+        let tempStudent = students.find(
           (student) => student.id === e.target.value
         );
-        console.log(tempStudent);
          if (
            !tempStudent.assignToClass ||
-           e.target.value === classRoomData[e.target.name]
+           e.target.value === classRoom[e.target.name]
          ) {
            onChange(e.target.name, e.target.value);
          } else {
@@ -69,7 +71,6 @@ const EditClassRoom = ({
           onChange={onInputChange}
           name={"homeRoomTeacherId"}
           defaultValue={classRoom.homeRoomTeacherId}
-          style={{ border: choseWrongTeacher ? "1px solid read" : "" }}
         >
           <option value="0" disabled={true}>
             home Room teacher
@@ -85,71 +86,63 @@ const EditClassRoom = ({
         <Select
           studentI={1}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={2}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={3}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={4}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={5}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={6}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={7}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={8}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={9}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
         <Select
           studentI={10}
           onInputChange={onInputChange}
-          studentsData={studentsData}
+          studentsData={students}
           classRoom={classRoom}
         />
-
-        
-        {choseWrongStudent ? (
-          <span style={{ color: "red" }}>{"chose anther student"}</span>
-        ) : (
-          ""
-        )}
-
         <input type="submit" value="Confirm" />
         <input type="button" value="Cancel" onClick={onCancelBtnClick} />
       </form>

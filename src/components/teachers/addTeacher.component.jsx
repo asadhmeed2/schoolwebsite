@@ -10,6 +10,7 @@ const AddTeacher = ({ onChange, onSubmit, onClear ,edit}) => {
 const [editMode] = useState(edit);
   const onFormSubmit = (e) => {
     e.preventDefault();
+    onClearClick();
     onSubmit();
   };
   const onInputChange = (e) => {

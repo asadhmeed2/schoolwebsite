@@ -2,20 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./style/classRoom.style.css";
 import db from "../../firebase";
 import {
-  collection,
-  getDocs,
   getDoc,
-  setDoc,
   doc,
-  deleteDoc,
   updateDoc,
 } from "firebase/firestore";
 import EditClassRoom from "./editClassRoom.component";
-const ClassRoom = ({ classRoom, students, teachers }) => {
+const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
   //states
   const [editMode, setEditMode] = useState(false);
   const [studentsData, setStudentsData] = useState([]);
-  const [teachersData, setTeachersData] = useState([]);
   const [classRoomData, setClassRoomData] = useState({
     grade: classRoom.grade,
     homeRoomTeacherId: classRoom.homeRoomTeacherId,
@@ -34,32 +29,30 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
     id: classRoom.id,
   });
   const [classRoomStudents, setClassRoomStudents] = useState([]);
+  // const [classRoomTeacher, setClassRoomTeacher] = useState({});
   const [showClassStudents, setShowClassStudents] = useState(false);
   //update the states before the first render
   useEffect(() => {
     setStudentsData(students);
-    setTeachersData( teachers);
-    setClassRoomData( classRoom);
-  }, []);
-  //inner functions
-  const updateTeacher = (isAssignToClass) => {};
-  const updateStudent = (isAssignToClass) => {};
+  }, [students]);
   /**
-   * update the class automatically
+   * update the class with the available students with the same class room grade automatically
    */
   const addStudnetsToClasses = async () => {
     let tempClassStudents = [];
     let tempAllStudents = [];
     if (classRoomData.hasAstudents) return;
-    tempAllStudents = studentsData.map((student, i) => {
+    let studentCounter = 0;
+    tempAllStudents = studentsData.map((student) => {
       //iterate on all the students and add the students of the same grade and not assigned to anther class (class max is 10 students)
       if (
-        i < 10 &&
-        !student.isAssignToClass &&
-        student.grade == classRoomData.grade
+        studentCounter < 10 &&
+        !student.assignToClass &&
+        student.grade === classRoomData.grade
       ) {
         student.assignToClass = true;
         tempClassStudents = [...tempClassStudents, student];
+        studentCounter++;
         return student;
       }
       return student;
@@ -83,36 +76,65 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
   const editModeOff = () => {
     setEditMode(false);
   };
-  const showStudents = async () => {
+  const getClassStudentsFromDataBase = async () => {
     let tempClassStudents = [];
     if (classRoomStudents.length === 0) {
       for (let i = 0; i < 10; i++) {
-        console.log(!(classRoom[`student${i + 1}Id`].length === 0));
-        if (!(classRoom[`student${i + 1}Id`].length === 0)) {
+        if (!(classRoomData[`student${i + 1}Id`].length === 0)) {
           let student = await getDoc(
-            doc(db, "student", classRoom[`student${i + 1}Id`])
+            doc(db, "student", classRoomData[`student${i + 1}Id`])
           );
           tempClassStudents = [...tempClassStudents, student.data()];
         }
       }
       setClassRoomStudents(tempClassStudents);
     }
+  };
+
+  // const getClassTeacherFromDataBase = async () => {
+  //   try {
+  //     if (classRoomData.homeRoomTeacherId.length > 0) {
+  //       const tempTeacher = await getDoc(
+  //         doc(db, "teacher", classRoomData.homeRoomTeacherId)
+  //       );
+  //       setClassRoomTeacher(tempTeacher.data());
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  const showStudents = async () => {
+    await getClassStudentsFromDataBase();
     setShowClassStudents(true);
   };
   const hideClassStudents = () => {
     setShowClassStudents(false);
   };
+  /**
+   *
+   * @param {*} name name on the input field or select field
+   * @param {*} value the input of the user
+   */
   const onInputChange = (name, value) => {
     let tempClassRoomData = { ...classRoomData };
     tempClassRoomData[name] = value;
     setClassRoomData(tempClassRoomData);
   };
-  const updateClassRoom = async(oldeClassRoom) => {
+  /**
+   *  updata the class room and the students and the home room teacher data 
+   * with assign or not assigned to a class room 
+   * @param {*} oldeClassRoom  the old data of the updated class room
+   */
+  const updateClassRoom = async (oldeClassRoom) => {
     try {
+      setClassRoomStudents([]);
+      setShowClassStudents(false);
       if (oldeClassRoom.homeRoomTeacherId !== classRoomData.homeRoomTeacherId) {
-        await updateDoc(doc(db, "teacher", oldeClassRoom.homeRoomTeacherId), {
-          assignToClass: false,
-        });
+        if (oldeClassRoom.homeRoomTeacherId) {
+          await updateDoc(doc(db, "teacher", oldeClassRoom.homeRoomTeacherId), {
+            assignToClass: false,
+          });
+        }
         await updateDoc(doc(db, "teacher", classRoomData.homeRoomTeacherId), {
           assignToClass: true,
         });
@@ -121,10 +143,13 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
         if (oldeClassRoom[`student${i}Id`] && classRoomData[`student${i}Id`]) {
           if (
             oldeClassRoom[`student${i}Id`] !== classRoomData[`student${i}Id`]
-            ) {
-            await updateDoc(doc(db, "student", oldeClassRoom[`student${i}Id`]), {
-              assignToClass: false,
-            });
+          ) {
+            await updateDoc(
+              doc(db, "student", oldeClassRoom[`student${i}Id`]),
+              {
+                assignToClass: false,
+              }
+            );
             await updateDoc(
               doc(db, "student", classRoomData[`student${i}Id`]),
               {
@@ -132,14 +157,41 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
               }
             );
           }
-        }else if (classRoomData[`student${i}Id`]) {
+        } else if (classRoomData[`student${i}Id`]) {
           await updateDoc(doc(db, "student", classRoomData[`student${i}Id`]), {
             assignToClass: true,
           });
         }
-        
       }
-      await updateDoc(doc(db, "classRoom", classRoomData.id), classRoomData);
+      let tempClassRoomData = { ...classRoomData };
+      tempClassRoomData.hasAstudents = true;
+      await updateDoc(
+        doc(db, "classRoom", classRoomData.id),
+        tempClassRoomData
+      );
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+/**
+ * read the function name :) plus update the home Room Teacher data
+ */
+  const removeClassAndUpdateClassStudnetsAssignToClassField = async () => {
+    try {
+      await getClassStudentsFromDataBase();
+      if (classRoomData.homeRoomTeacherId) {
+        await updateDoc(doc(db, "teacher", classRoomData.homeRoomTeacherId), {
+          assignToClass: false,
+        });
+      }
+      
+      classRoomStudents.map(async (student) => {
+        await updateDoc(doc(db, "student", student.id), {
+          assignToClass: false,
+        });
+      });
+      await removeClassRoom(classRoomData.id);
     } catch (err) {
       console.error(err);
     }
@@ -153,7 +205,6 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
       >{`grade : ${classRoomData.grade}`}</p>
       {showClassStudents ? (
         <>
-          {console.log(classRoomStudents)}
           {classRoomStudents.map((student, i) => {
             return (
               <p key={student.id} className="studentFirstName">{`${
@@ -170,6 +221,11 @@ const ClassRoom = ({ classRoom, students, teachers }) => {
         type="button"
         value="Add Students Auto"
         onClick={addStudnetsToClasses}
+      />
+      <input
+        type="button"
+        value="Remove"
+        onClick={removeClassAndUpdateClassStudnetsAssignToClassField}
       />
       <input type="button" value="edit" onClick={editModeOn} />
       {editMode ? (

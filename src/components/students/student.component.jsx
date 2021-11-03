@@ -22,7 +22,11 @@ const Student = ({
     id: id,
   });
   const [edit, setEdit] = React.useState(false);
-
+  /**
+   *
+   * @param {*} name name on the input field or select field
+   * @param {*} value the input of the user
+   */
   const onInputChange = (name, value) => {
     const tempStudent = { ...student };
     tempStudent[name] = value;
@@ -44,17 +48,18 @@ const Student = ({
   };
   const onCancelEdit = () => {
     setEdit(false);
-  }
+  };
   return (
     <div className="student">
-       {!edit ? (<>
-      <p>{`First name : ${student.firstName}`}</p>
-      <p>{`Last name : ${student.lastName}`}</p>
-      <p>{`Age : ${student.age}`}</p>
-      <p>{`Grade : ${student.grade}`}</p>
-      <p>{`assignToClass : ${student.assignToClass}`}</p>
-      <input type="button" onClick={deleteStudent} value={"delete"} />
-        <input type="button" onClick={updateStudentON} value={"edit"} />
+      {!edit ? (
+        <>
+          <p>{`First name : ${student.firstName}`}</p>
+          <p>{`Last name : ${student.lastName}`}</p>
+          <p>{`Age : ${student.age}`}</p>
+          <p>{`Grade : ${student.grade}`}</p>
+          <p>{`assignToClass : ${student.assignToClass}`}</p>
+          <input type="button" onClick={deleteStudent} value={"delete"} />
+          <input type="button" onClick={updateStudentON} value={"edit"} />
         </>
       ) : (
         <AddStudent
