@@ -1,0 +1,30 @@
+.main {
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  font-family: sans-serif;
+  line-height: 3rem;
+  padding: 3rem  3rem 0 3rem;
+
+  color: aliceblue;
+  text-shadow: black 1px 1px;
+}
+.discribtion {
+  max-width: 50vw;
+  font-size: 1.7rem;
+}
+h1 {
+  font-size: 3rem;
+}
+h2 {
+  font-size: 2rem;
+  margin: 4rem 0;
+}
+.logo {
+  width: 50vw;
+  height: 30vh;
+  margin-top: 3rem;
+}

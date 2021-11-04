@@ -1,0 +1,9 @@
+.search input{
+    width:15vw;
+    height:3vh;
+    padding-left: 10px;
+    border-radius: 5px;
+}
+.container{
+ margin-top: 3rem;
+}

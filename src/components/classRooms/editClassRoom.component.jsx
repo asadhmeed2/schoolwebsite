@@ -53,6 +53,7 @@ const EditClassRoom = ({
            e.target.classList.add("red");
          }
     }else{
+      console.log(e.target.name,e.target.value);
       onChange(e.target.name, e.target.value);
     }
   };

@@ -10,17 +10,17 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import AddClassRoom from "./addClassRoom.component"
+import AddClassRoom from "./addClassRoom.component";
 
 const ClassRoomContainer = () => {
   const [classRooms, setClassRooms] = useState([]);
-  const [teachers,setTeachers]=useState([])
-  const [students,setStudents]=useState([])
+  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [classRoom, setClassRoom] = useState({
     grade: "",
     homeRoomTeacherId: "",
-    hasAstudents:false,
+    hasAstudents: false,
     number: 0,
     student1Id: "",
     student2Id: "",
@@ -38,80 +38,80 @@ const ClassRoomContainer = () => {
   const classRoomRef = collection(db, "classRoom");
   const teacherRef = collection(db, "teacher");
   const studentRef = collection(db, "student");
-  
-//initialize the states and get the data from the server
-const getData =()=>{
+
+  //initialize the states and get the data from the server
+  const getData = () => {
     setLoading(true);
-     getDocs(classRoomRef)
-       .then((res) => {
-         setClassRooms((prev) =>
-           res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-         );
-       })
-       .catch((err) => {
-         console.error(err);
-       });
-     getDocs(studentRef).then((res)=>{
-      setStudents((prev) =>
-        res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      );
-    }).catch(err=>{
-      console.error(err);
-    })
-     getDocs(teacherRef)
-       .then((res) => {
-         setTeachers((prev) =>
-           res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-         );
-       })
-       .catch((err) => {
-         console.error(err);
-       });
+    getDocs(classRoomRef)
+      .then((res) => {
+        setClassRooms((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    getDocs(studentRef)
+      .then((res) => {
+        setStudents((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    getDocs(teacherRef)
+      .then((res) => {
+        setTeachers((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     setLoading(false);
-}
+  };
   useEffect(() => {
-     setLoading(true);
-     getDocs(classRoomRef)
-       .then((res) => {
-         setClassRooms((prev) =>
-           res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-         );
-       })
-       .catch((err) => {
-         console.error(err);
-       });
-     getDocs(studentRef)
-       .then((res) => {
-         setStudents((prev) =>
-           res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-         );
-       })
-       .catch((err) => {
-         console.error(err);
-       });
-     getDocs(teacherRef)
-       .then((res) => {
-         setTeachers((prev) =>
-           res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-         );
-       })
-       .catch((err) => {
-         console.error(err);
-       });
-     setLoading(false);
-  }, [classRoomRef, studentRef, teacherRef]);
+    setLoading(true);
+    getDocs(classRoomRef)
+      .then((res) => {
+        setClassRooms((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    getDocs(studentRef)
+      .then((res) => {
+        setStudents((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    getDocs(teacherRef)
+      .then((res) => {
+        setTeachers((prev) =>
+          res.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    setLoading(false);
+    //eslint-disable-nex-line
+  }, []); //eslint-disable-line react-hooks/exhaustive-deps
   // add a new class room to the data base
   const addClassRoom = async () => {
     const tempClassRoom = { ...classRoom };
     tempClassRoom.id = uuidv4();
     setClassRooms((prev) => [...classRooms, tempClassRoom]);
-    await setDoc(
-      doc(db, "classRoom", tempClassRoom.id),
-      tempClassRoom
-    );
+    await setDoc(doc(db, "classRoom", tempClassRoom.id), tempClassRoom);
   };
   /**
-   * 
+   *
    * @param {*} name name on the input field or select field
    * @param {*} value the input of the user
    */
@@ -121,8 +121,8 @@ const getData =()=>{
     setClassRoom(tempClassRoom);
   };
   /**
-   * 
-   * @param {*} id id of the class room that will be deleted 
+   *
+   * @param {*} id id of the class room that will be deleted
    */
   const deleteClassRoom = async (id) => {
     try {
@@ -130,7 +130,7 @@ const getData =()=>{
       tempClassRooms = tempClassRooms.filter((teacher) => teacher.id !== id);
       setClassRooms((prev) => tempClassRooms);
       await deleteDoc(doc(db, "classRoom", id));
-      await getData();//update the current states data 
+      await getData(); //update the current states data
     } catch (e) {
       console.error(e);
     }
@@ -139,21 +139,23 @@ const getData =()=>{
   return (
     <div className="classRoomContainer">
       <div className="addClassRoom">
-        <AddClassRoom onSubmit={addClassRoom} onChange={onInputChange}/>
+        <AddClassRoom onSubmit={addClassRoom} onChange={onInputChange} />
       </div>
 
-      {!loading?classRooms.map((classRoom)=>{//show the class rooms to the user
-        return (
-          <ClassRoom
-            key={classRoom.id}
-            classRoom={classRoom}
-            students={students}
-            teachers={teachers}
-            removeClassRoom={deleteClassRoom}
-          />
-        );
-      }):"loading"
-      }
+      {!loading
+        ? classRooms.map((classRoom) => {
+            //show the class rooms to the user
+            return (
+              <ClassRoom
+                key={classRoom.id}
+                classRoom={classRoom}
+                students={students}
+                teachers={teachers}
+                removeClassRoom={deleteClassRoom}
+              />
+            );
+          })
+        : "loading"}
     </div>
   );
 };

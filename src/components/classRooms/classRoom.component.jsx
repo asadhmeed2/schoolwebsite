@@ -34,7 +34,8 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
   //update the states before the first render
   useEffect(() => {
     setStudentsData(students);
-  }, [students]);
+    //eslint-disable-nex-line
+  }, []); //eslint-disable-line react-hooks/exhaustive-deps
   /**
    * update the class with the available students with the same class room grade automatically
    */
@@ -116,13 +117,14 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
    * @param {*} value the input of the user
    */
   const onInputChange = (name, value) => {
+    console.log(name, value);
     let tempClassRoomData = { ...classRoomData };
     tempClassRoomData[name] = value;
     setClassRoomData(tempClassRoomData);
   };
   /**
-   *  updata the class room and the students and the home room teacher data 
-   * with assign or not assigned to a class room 
+   *  updata the class room and the students and the home room teacher data
+   * with assign or not assigned to a class room
    * @param {*} oldeClassRoom  the old data of the updated class room
    */
   const updateClassRoom = async (oldeClassRoom) => {
@@ -139,6 +141,7 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
           assignToClass: true,
         });
       }
+
       for (let i = 1; i <= 10; i++) {
         if (oldeClassRoom[`student${i}Id`] && classRoomData[`student${i}Id`]) {
           if (
@@ -163,20 +166,25 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
           });
         }
       }
+      await getClassStudentsFromDataBase();
       let tempClassRoomData = { ...classRoomData };
-      tempClassRoomData.hasAstudents = true;
-      await updateDoc(
-        doc(db, "classRoom", classRoomData.id),
+      if (classRoomStudents) {
+        tempClassRoomData.hasAstudents = true;
+      }
+      console.log(tempClassRoomData);
+      let res = await updateDoc(
+        doc(db, "classRoom", tempClassRoomData.id),
         tempClassRoomData
       );
-
+      setClassRoomData(tempClassRoomData);
+      console.log(res);
     } catch (err) {
       console.error(err);
     }
   };
-/**
- * read the function name :) plus update the home Room Teacher data
- */
+  /**
+   * read the function name :) plus update the home Room Teacher data
+   */
   const removeClassAndUpdateClassStudnetsAssignToClassField = async () => {
     try {
       await getClassStudentsFromDataBase();
@@ -185,7 +193,7 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
           assignToClass: false,
         });
       }
-      
+
       classRoomStudents.map(async (student) => {
         await updateDoc(doc(db, "student", student.id), {
           assignToClass: false,

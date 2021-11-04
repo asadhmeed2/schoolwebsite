@@ -16,7 +16,7 @@ import AddStudent from "./addStudent.component";
 
 const StudentContainer = () => {
   const [students, setStudents] = useState([]);
-  const [searchedStudents,setSearchedStudents] = useState([]);
+  const [searchedStudents, setSearchedStudents] = useState([]);
   const [classRooms, setClassRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [student, setStudent] = useState({
@@ -29,22 +29,6 @@ const StudentContainer = () => {
   });
   const studentsRef = collection(db, "student");
   const classRoomRef = collection(db, "classRoom");
-
-  // const getData =async()=>{
-  //   setLoading(true);
-  //   const data = await getDocs(studentsRef);
-  //   const classRoomData = await getDocs(classRoomRef);
-  //   setStudents((prev) =>
-  //     data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-  //   );
-  //   setSearchedStudents((prev) =>
-  //     data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-  //   );
-  //   setClassRooms((prev) =>
-  //     classRoomData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-  //   );
-  //   setLoading(false);
-  // }
   useEffect(() => {
     setLoading(true);
     getDocs(studentsRef).then((data) => {
@@ -63,12 +47,17 @@ const StudentContainer = () => {
       );
     });
     setLoading(false);
-  }, [studentsRef, classRoomRef]);
+    //eslint-disable-nex-line
+  }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
-  const onSearchInputChange=(name)=>{
-    let tempSearchedStudents= students.filter((student)=>`${student.firstName} ${student.lastName}`.toLowerCase().includes(name.toLowerCase()))
+  const onSearchInputChange = (name) => {
+    let tempSearchedStudents = students.filter((student) =>
+      `${student.firstName} ${student.lastName}`
+        .toLowerCase()
+        .includes(name.toLowerCase())
+    );
     setSearchedStudents((prev) => tempSearchedStudents);
-  }
+  };
   const addStudent = async () => {
     const tempStudent = { ...student };
     tempStudent.id = uuidv4();
@@ -76,7 +65,7 @@ const StudentContainer = () => {
     if (students.length === searchedStudents.length) {
       setSearchedStudents((prev) => [...searchedStudents, tempStudent]);
     }
-     await setDoc(doc(db, "student", tempStudent.id), tempStudent);
+    await setDoc(doc(db, "student", tempStudent.id), tempStudent);
   };
   /**
    *
@@ -123,7 +112,7 @@ const StudentContainer = () => {
     let tempStudents = [...students];
     tempStudents = tempStudents.filter((student) => student.id !== id);
     setStudents((prev) => tempStudents);
-    if(students.length===searchedStudents.length){
+    if (students.length === searchedStudents.length) {
       setSearchedStudents((prev) => tempStudents);
     }
     await deleteDoc(doc(db, "student", id));
@@ -134,7 +123,7 @@ const StudentContainer = () => {
         if (student.id === studentData.id) return studentData;
         return student;
       });
-       
+
       setStudents(TempStudents);
       if (students.length === searchedStudents.length) {
         setSearchedStudents((prev) => TempStudents);

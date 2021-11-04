@@ -39,7 +39,7 @@ const StudentContainer = () => {
         setTeachers((prev) =>
           data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
         );
-        if(!searchedTeachers.length){
+        if (!searchedTeachers.length) {
           setSearchedTeachers((prev) =>
             data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
           );
@@ -58,7 +58,8 @@ const StudentContainer = () => {
         console.error(error);
       });
     setLoading(false);
-  }, [classRoomRef, teachersRef]);
+    //eslint-disable-nex-line
+  }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
   const onSearchInputChange = (name) => {
     let tempSearchedTeachers = teachers.filter((teacher) =>

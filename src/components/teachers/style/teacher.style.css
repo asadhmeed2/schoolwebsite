@@ -1,3 +1,15 @@
-.teacher{
-     margin:0.5vh 2vw ;
+
+.teacher {
+  margin: 0.5vh 2vw;
+  min-width: 15vw;
+  min-height: 20vh;
+  font-size: 1.5rem;
+  color: aliceblue;
+  box-shadow: black 0 0 3px 0.02rem;
+  padding: 1rem;
+}
+.btn {
+  width: 4vw;
+  height: 2vh;
+  margin: 0.5rem;
 }

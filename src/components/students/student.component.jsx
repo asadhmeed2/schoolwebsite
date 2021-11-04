@@ -58,8 +58,18 @@ const Student = ({
           <p>{`Age : ${student.age}`}</p>
           <p>{`Grade : ${student.grade}`}</p>
           <p>{`assignToClass : ${student.assignToClass}`}</p>
-          <input type="button" onClick={deleteStudent} value={"delete"} />
-          <input type="button" onClick={updateStudentON} value={"edit"} />
+          <input
+            className="btn"
+            type="button"
+            onClick={deleteStudent}
+            value={"delete"}
+          />
+          <input
+            className="btn"
+            type="button"
+            onClick={updateStudentON}
+            value={"edit"}
+          />
         </>
       ) : (
         <AddStudent

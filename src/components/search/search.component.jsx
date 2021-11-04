@@ -8,7 +8,10 @@ const onInputChange=(e)=>{
 }
 return (
     <div className="search">
+        <div className="container">
+        <h3>Search</h3>
         <input type="text" placeholder='name' onChange={onInputChange}/>
+        </div>
     </div>
 )
 }

@@ -1,4 +1,4 @@
-import React ,{ useState} from "react";
+import React, { useState } from "react";
 import "./style/teacher.style.css";
 import AddTeacher from "./addTeacher.component";
 const Teacher = ({
@@ -61,9 +61,19 @@ const Teacher = ({
           <p>Subject : {teacher.subject}</p>
           <p>assign To Class : {teacher.assignToClass}</p>
 
-          <input type="button" value={"delete"} onClick={onDeleteButtonClick} />
+          <input
+            type="button"
+            className="btn"
+            value={"delete"}
+            onClick={onDeleteButtonClick}
+          />
 
-          <input type="button" onClick={updateTeacherON} value={"edit"} />
+          <input
+            type="button"
+            className="btn"
+            onClick={updateTeacherON}
+            value={"edit"}
+          />
         </>
       ) : (
         <AddTeacher
