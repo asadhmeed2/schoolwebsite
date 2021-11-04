@@ -91,19 +91,6 @@ const ClassRoom = ({ classRoom, students, teachers, removeClassRoom }) => {
       setClassRoomStudents(tempClassStudents);
     }
   };
-
-  // const getClassTeacherFromDataBase = async () => {
-  //   try {
-  //     if (classRoomData.homeRoomTeacherId.length > 0) {
-  //       const tempTeacher = await getDoc(
-  //         doc(db, "teacher", classRoomData.homeRoomTeacherId)
-  //       );
-  //       setClassRoomTeacher(tempTeacher.data());
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
   const showStudents = async () => {
     await getClassStudentsFromDataBase();
     setShowClassStudents(true);
